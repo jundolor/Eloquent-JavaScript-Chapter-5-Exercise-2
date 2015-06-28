@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Higher Order Functions</title>
+	<script src="ancestry.js"></script>
+	<script>
+	//step 1: parse the array in ANCESTRY_FILE
+	//this creates an array of objects
+	//each object will have the following keys: name, sex, born, died, father, mother
+	var ancestry = JSON.parse(ANCESTRY_FILE);
+	//step 1: create an object byName for each of the ancestry array element
+	//the key will be the array object name
+	//the value will be the object itself
+	var byName = {};
+	ancestry.forEach(function(person){
+		byName[person.name] = person;
+		
+	});
+	//step 2: create a function that will be used in the array filter method
+	//if the object mother key value is null or if object byName with mother key does not exist
+	//it gets filtered out
+	var reduceMom = function(person){
+		if(byName[person.mother] != null) return person
+	}
+	//step 3: create a function to get the average
+	//note that array is passed as a parameter
+	//and array reduce method is used to get the sum of the array
+	var average = function(array){
+		var plus = function(a, b){
+			return a + b;
+		}
+		return array.reduce(plus)/ array.length;
+	}
+	//step 4: create a function to get the difference between the year the person is born and the year mother is born
+	//note: object byName is used to point to the mother object
+	var ageMomDiff = function(p){
+		var born = p.born;
+		var momBorn = byName[p.mother].born;
+		return born - momBorn;
+	}
+	//finally, we use a technique called compose to combine array methods
+	//filter method calls step 2 function
+	//map method calls step 3 function
+	//this creates an array of age difference of object with mother born year and element born keys
+	//the result array is called to 
+	console.log("average", average(ancestry.filter(reduceMom).map(ageMomDiff)));
+	</script>
+  </head>
+  <body>
+    <h1>Solution to Eloquent JavaScript Chapter 5 Exercise 2</h1>
+  </body>
+</html>
